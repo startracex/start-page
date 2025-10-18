@@ -1,0 +1,13 @@
+<svg version="1.1" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <polygon fill="#339EAD" points="22,10 9,6 11,12 22,16  "/>
+    <polygon fill="url(#SVGID_1_)" points="22,10 9,6 11,12 22,16  "/>
+    <polygon opacity="0.1" points="9,6 11,12 22,16 22,15.75 11,11.75  "/>
+    <polygon fill="#1991A3" points="2,0 8,2 8,24 2,22  "/>
+    <polygon fill="#008599" points="22,10 2,22 8,24 22,16  "/>
+    <polygon fill="#FFFFFF" opacity="0.2" points="2,0 2,0.25 8,2.25 8,2  "/>
+    <polygon fill="#FFFFFF" opacity="0.2" points="9,6 9.0928345,6.2785645 21.7245483,10.1652832 2,22 22,10.25 22,10  "/>
+    <polygon fill="url(#SVGID_2_)" points="9,6 11,12 15.7735596,13.7358398 8,18.4000244 8,2 2,0 2,22 8,24 22,16 22,10  "/>
+  </g>
+</svg>
