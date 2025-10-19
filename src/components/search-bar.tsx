@@ -50,6 +50,16 @@ const defaultEngines: Engine[] = [
     icon: "/github.svg",
   },
   {
+    name: "NPM",
+    url: `https://www.npmjs.com/search?q=%s`,
+    icon: "/npm.svg",
+  },
+  {
+    name: "StackOverflow",
+    url: `https://stackoverflow.com/search?q=%s`,
+    icon: "/stackoverflow.svg",
+  },
+  {
     name: "Youtube",
     url: `https://www.youtube.com/results?search_query=%s`,
     icon: "/youtube.svg",
@@ -58,16 +68,6 @@ const defaultEngines: Engine[] = [
     name: "Bilibili",
     url: `https://search.bilibili.com/all?keyword=%s`,
     icon: "/bilibili.svg",
-  },
-  {
-    name: "StackOverflow",
-    url: `https://stackoverflow.com/search?q=%s`,
-    icon: "/stackoverflow.svg",
-  },
-  {
-    name: "NPM",
-    url: `https://www.npmjs.com/search?q=%s`,
-    icon: "/npm.svg",
   },
 ].map((e) => ({
   ...e,
