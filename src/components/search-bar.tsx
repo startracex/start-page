@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toPublicPath } from "@/lib/public";
 
 type Engine = {
   name: string;
@@ -63,13 +64,16 @@ const defaultEngines: Engine[] = [
     url: `https://stackoverflow.com/search?q=%s`,
     icon: "/stackoverflow.svg",
   },
-
   {
     name: "NPM",
     url: `https://www.npmjs.com/search?q=%s`,
     icon: "/npm.svg",
   },
-].map((e) => ({ ...e, id: crypto.randomUUID() }));
+].map((e) => ({
+  ...e,
+  id: crypto.randomUUID(),
+  icon: toPublicPath(e.icon),
+}));
 
 export default function SearchBar({
   fetchSuggestions,
