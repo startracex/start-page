@@ -32,57 +32,72 @@ interface Website {
   favicon: string;
 }
 
+const getFaviconUrl = (url: string): string => {
+  try {
+    const parsed = new URL(url);
+    return `${parsed.origin}/favicon.ico`;
+  } catch {
+    return "";
+  }
+};
+
 export default function PinnedWebsites() {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [newWebsite, setNewWebsite] = useState({
-    name: "",
-    url: "",
-    favicon: "",
-  });
+
+  const [addForm, setAddForm] = useState({ name: "", url: "", favicon: "" });
+  const [editForm, setEditForm] = useState({ name: "", url: "", favicon: "" });
 
   useEffect(() => {
     const stored = localStorage.getItem("pinnedWebsites");
     if (stored) {
-      setWebsites(JSON.parse(stored));
+      try {
+        setWebsites(JSON.parse(stored));
+      } catch {
+        setWebsites(defaultWebsites);
+      }
     } else {
       setWebsites(defaultWebsites);
     }
   }, []);
 
   const handleAddWebsite = () => {
-    if (newWebsite.name && newWebsite.url) {
-      const url = newWebsite.url.toLowerCase().startsWith("http")
-        ? newWebsite.url
-        : `https://${newWebsite.url}`;
-      const favicon = newWebsite.favicon || `${new URL(url).origin}/favicon.ico`;
-      const updatedWebsites = [...websites, { name: newWebsite.name, url, favicon }];
-      setWebsites(updatedWebsites);
-      localStorage.setItem("pinnedWebsites", JSON.stringify(updatedWebsites));
-      setNewWebsite({ name: "", url: "", favicon: "" });
-      setIsAddDialogOpen(false);
+    if (!addForm.name || !addForm.url) return;
+
+    let url = addForm.url.trim();
+    if (!url.toLowerCase().startsWith("http")) {
+      url = `https://${url}`;
     }
+
+    const favicon = addForm.favicon || getFaviconUrl(url);
+    const updatedWebsites = [...websites, { name: addForm.name.trim(), url, favicon }];
+    setWebsites(updatedWebsites);
+    localStorage.setItem("pinnedWebsites", JSON.stringify(updatedWebsites));
+    setAddForm({ name: "", url: "", favicon: "" });
+    setIsAddDialogOpen(false);
   };
 
   const handleEditWebsite = () => {
-    if (editingIndex !== null && newWebsite.name && newWebsite.url) {
-      const url = newWebsite.url.startsWith("http") ? newWebsite.url : `https://${newWebsite.url}`;
-      const favicon = newWebsite.favicon || `${new URL(url).origin}/favicon.ico`;
-      const updatedWebsites = [...websites];
-      updatedWebsites[editingIndex] = { name: newWebsite.name, url, favicon };
-      setWebsites(updatedWebsites);
-      localStorage.setItem("pinnedWebsites", JSON.stringify(updatedWebsites));
-      setNewWebsite({ name: "", url: "", favicon: "" });
-      setEditingIndex(null);
-      setIsEditDialogOpen(false);
+    if (editingIndex === null || !editForm.name || !editForm.url) return;
+
+    let url = editForm.url.trim();
+    if (!url.toLowerCase().startsWith("http")) {
+      url = `https://${url}`;
     }
+
+    const favicon = editForm.favicon || getFaviconUrl(url);
+    const updatedWebsites = [...websites];
+    updatedWebsites[editingIndex] = { name: editForm.name.trim(), url, favicon };
+    setWebsites(updatedWebsites);
+    localStorage.setItem("pinnedWebsites", JSON.stringify(updatedWebsites));
+    setIsEditDialogOpen(false);
   };
 
   const openEditDialog = (index: number) => {
     setEditingIndex(index);
-    setNewWebsite(websites[index]);
+    setEditForm(websites[index]);
     setIsEditDialogOpen(true);
   };
 
@@ -95,7 +110,7 @@ export default function PinnedWebsites() {
   return (
     <div className="space-y-2 min-h-[200px]">
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-[min(48rem,95vw)]">
           <DialogHeader>
             <DialogTitle>Edit Website</DialogTitle>
           </DialogHeader>
@@ -104,27 +119,24 @@ export default function PinnedWebsites() {
               <Label htmlFor="edit-name">Name</Label>
               <Input
                 id="edit-name"
-                placeholder="GitHub"
-                value={newWebsite.name}
-                onChange={(e) => setNewWebsite({ ...newWebsite, name: e.target.value })}
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-url">URL</Label>
               <Input
                 id="edit-url"
-                placeholder="https://github.com"
-                value={newWebsite.url}
-                onChange={(e) => setNewWebsite({ ...newWebsite, url: e.target.value })}
+                value={editForm.url}
+                onChange={(e) => setEditForm({ ...editForm, url: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-favicon">Favicon URL</Label>
               <Input
                 id="edit-favicon"
-                placeholder="https://github.com/favicon.ico"
-                value={newWebsite.favicon}
-                onChange={(e) => setNewWebsite({ ...newWebsite, favicon: e.target.value })}
+                value={editForm.favicon}
+                onChange={(e) => setEditForm({ ...editForm, favicon: e.target.value })}
               />
             </div>
             <Button onClick={handleEditWebsite} className="w-full">
@@ -133,15 +145,16 @@ export default function PinnedWebsites() {
           </div>
         </DialogContent>
       </Dialog>
+
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-muted-foreground">Pinned Websites</h2>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="icon">
-              <Plus />
+              <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[min(48rem,95vw)]">
             <DialogHeader>
               <DialogTitle>Add Website</DialogTitle>
             </DialogHeader>
@@ -151,8 +164,8 @@ export default function PinnedWebsites() {
                 <Input
                   id="name"
                   placeholder="Example"
-                  value={newWebsite.name}
-                  onChange={(e) => setNewWebsite({ ...newWebsite, name: e.target.value })}
+                  value={addForm.name}
+                  onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
@@ -160,8 +173,8 @@ export default function PinnedWebsites() {
                 <Input
                   id="url"
                   placeholder="example.com"
-                  value={newWebsite.url}
-                  onChange={(e) => setNewWebsite({ ...newWebsite, url: e.target.value })}
+                  value={addForm.url}
+                  onChange={(e) => setAddForm({ ...addForm, url: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
@@ -169,13 +182,8 @@ export default function PinnedWebsites() {
                 <Input
                   id="favicon"
                   placeholder="example.com/favicon.ico"
-                  value={newWebsite.favicon}
-                  onChange={(e) =>
-                    setNewWebsite({
-                      ...newWebsite,
-                      favicon: e.target.value,
-                    })
-                  }
+                  value={addForm.favicon}
+                  onChange={(e) => setAddForm({ ...addForm, favicon: e.target.value })}
                 />
               </div>
               <Button onClick={handleAddWebsite} className="w-full">
@@ -185,6 +193,7 @@ export default function PinnedWebsites() {
           </DialogContent>
         </Dialog>
       </div>
+
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
         {websites.map((website, index) => (
           <div
