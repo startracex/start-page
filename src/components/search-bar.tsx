@@ -36,7 +36,7 @@ const defaultEngines: Engine[] = [
   },
   {
     name: "DuckDuckGo",
-    url: `https://duckduckgo.com/?q= ${blockArgs}`,
+    url: `https://duckduckgo.com/?q=%s ${blockArgs}`,
     icon: "/duckduckgo.svg",
   },
   {
@@ -166,85 +166,81 @@ export default function SearchBar({
           />
         </div>
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogContent
-            className="overflow-y-scroll"
-            style={{
-              maxHeight: "calc(100vh - 4em)",
-            }}
-          >
-            <DialogTitle>Search engine settings</DialogTitle>
-
-            <RadioGroup
-              className="gap-6"
-              defaultValue={selectedEngine.id}
-              onValueChange={(id) => {
-                setSelectedEngine(engines.find((engine) => engine.id === id) as Engine);
-              }}
-            >
-              {engines.map((engine) => {
-                return (
-                  <Label key={engine.id} className="flex items-center gap-4">
-                    <div className="row-span-2 col-start-1 row-start-1">
-                      <RadioGroupItem value={engine.id} />
-                    </div>
-                    <div className="w-full flex flex-col gap-3">
-                      <Input
-                        className="w-40 col-start-2 row-start-1"
-                        value={engine.name}
-                        onChange={(e) =>
-                          setEngines(
-                            engines.map((eg) =>
-                              eg.id === engine.id
-                                ? {
-                                    ...eg,
-                                    name: e.target.value,
-                                  }
-                                : eg,
-                            ),
-                          )
-                        }
-                      />
-                      <Input
-                        className="col-start-2 row-start-2"
-                        value={engine.url}
-                        onChange={(e) =>
-                          setEngines(
-                            engines.map((eg) =>
-                              eg.id === engine.id ? { ...eg, url: e.target.value } : eg,
-                            ),
-                          )
-                        }
-                      />
-                    </div>
-                    <Button
-                      className="row-span-2 col-start-3 row-start-1"
-                      variant="destructive"
-                      onClick={() => {
-                        setEngines(engines.filter((eg) => eg.name !== engine.name));
-                      }}
-                    >
-                      <X />
-                    </Button>
-                  </Label>
-                );
-              })}
-            </RadioGroup>
-            <div className="text-center">
-              <Button
-                className="w-18"
-                size="icon"
-                onClick={() => {
-                  if (engines.length > 0 && engines[engines.length - 1].name === "") {
-                    return;
-                  }
-                  setEngines([
-                    ...engines,
-                    { name: "", url: "", icon: "", id: crypto.randomUUID() },
-                  ]);
+          <DialogContent className="w-full !max-w-[min(48rem,95vw)] max-h-[95vh] h-[95vh]">
+            <div className="flex flex-col h-full overflow-hidden gap-4">
+              <DialogTitle className="shrink-0">Search engine settings</DialogTitle>
+              <RadioGroup
+                className="gap-6 flex-1 overflow-y-auto"
+                defaultValue={selectedEngine.id}
+                onValueChange={(id) => {
+                  setSelectedEngine(engines.find((engine) => engine.id === id) as Engine);
                 }}
               >
-                <Plus />
-              </Button>
+                {engines.map((engine) => {
+                  return (
+                    <Label key={engine.id} className="flex items-center gap-4">
+                      <div className="row-span-2 col-start-1 row-start-1">
+                        <RadioGroupItem value={engine.id} />
+                      </div>
+                      <div className="w-full flex flex-col gap-3">
+                        <Input
+                          className="w-40 col-start-2 row-start-1"
+                          value={engine.name}
+                          onChange={(e) =>
+                            setEngines(
+                              engines.map((eg) =>
+                                eg.id === engine.id
+                                  ? {
+                                      ...eg,
+                                      name: e.target.value,
+                                    }
+                                  : eg,
+                              ),
+                            )
+                          }
+                        />
+                        <Input
+                          className="col-start-2 row-start-2"
+                          value={engine.url}
+                          onChange={(e) =>
+                            setEngines(
+                              engines.map((eg) =>
+                                eg.id === engine.id ? { ...eg, url: e.target.value } : eg,
+                              ),
+                            )
+                          }
+                        />
+                      </div>
+                      <Button
+                        className="row-span-2 col-start-3 row-start-1"
+                        variant="destructive"
+                        onClick={() => {
+                          setEngines(engines.filter((eg) => eg.name !== engine.name));
+                        }}
+                      >
+                        <X />
+                      </Button>
+                    </Label>
+                  );
+                })}
+              </RadioGroup>
+              <div className="shrink-0 text-center">
+                <Button
+                  className="w-18"
+                  size="icon"
+                  onClick={() => {
+                    if (engines.length > 0 && engines[engines.length - 1].name === "") {
+                      return;
+                    }
+                    setEngines([
+                      ...engines,
+                      { name: "", url: "", icon: "", id: crypto.randomUUID() },
+                    ]);
+                  }}
+                >
+                  <Plus />
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
