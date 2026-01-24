@@ -100,6 +100,7 @@ export default function SearchInput({
         aria-autocomplete="list"
         aria-controls="search-suggestions"
         aria-expanded={showSuggestions}
+        autoFocus
       />
       <Button
         size="icon-lg"
