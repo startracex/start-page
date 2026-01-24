@@ -78,7 +78,7 @@ const defaultEngines: Engine[] = [
 export default function SearchBar({
   fetchSuggestions,
 }: {
-  fetchSuggestions?: (query: string) => Promise<string[]>;
+  fetchSuggestions?: (query: string, engine: Engine) => Promise<string[]>;
 }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [engines, setEngines] = useState<Engine[]>();
@@ -162,7 +162,9 @@ export default function SearchBar({
           <SearchInput
             placeholder={`Search with ${selectedEngine.name}`}
             url={selectedEngine.url}
-            fetchSuggestions={fetchSuggestions}
+            fetchSuggestions={(query) =>
+              fetchSuggestions?.(query, selectedEngine) as Promise<string[]>
+            }
           />
         </div>
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
